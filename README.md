@@ -26,13 +26,11 @@ Make sure you have Python installed on your machine. You can download it from [p
 
 2. Install the required Python packages:
 
-   ```bash
-   pip install -r requirements.txt
+    	pip install -r requirements.txt
 
 3. Run the Streamlit app:
 
-   ```bash
-   streamlit run app.py
+   	streamlit run app.py
 
 
 ## Usage
