@@ -1,0 +1,41 @@
+.stApp {
+    background: #fdde81;
+    color: #ffffff;
+}
+
+.stApp header {
+    background: #fdde81;
+}
+section[data-testid="stSidebar"]{
+    background-color: #191616;
+    color:#ffffff;
+}
+
+div[role="alert"]{
+    background-color: #262424;
+    color:#fdde81;
+}
+
+.st-bt{
+    background-color:#262424;
+    color: #fdde81
+}
+div[value="0"]{
+    color: #fdde81;
+
+}
+label[data-testid="stWidgetLabel"]{
+    color: #fdde81;
+}
+button[kind="primary"]{
+    background: #dd2626;
+    color: #fdde81;
+}
+
+
+
+
+
+
+
+
