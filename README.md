@@ -1,6 +1,6 @@
 # Artistic Neural Style Transfer with Streamlit
 
-![Artistic Neural Style Transfer](https://img.shields.io/badge/Artistic%20Style%20Transfer-Streamlit-brightgreen)
+![Artistic Neural Style Transfer](https://artistic-neural-style-transfer-ckl2evec6o5vmb8t4hm5wg.streamlit.app/)
 
 This Python application allows you to apply artistic styles from famous works of art to your own images using Neural Style Transfer. It's built with Streamlit and TensorFlow and provides an interactive user interface for style transfer.
 
@@ -24,7 +24,7 @@ Make sure you have Python installed on your machine. You can download it from [p
    git clone https://github.com/assefadsci/Artistic-Neural-Style-Transfer.git
    cd neural-style-transfer
 
-2.Install the required Python packages:
+2. Install the required Python packages:
 
    ```bash
    pip install -r requirements.txt
@@ -35,7 +35,7 @@ Make sure you have Python installed on your machine. You can download it from [p
    streamlit run app.py
 
 
-##Usage
+## Usage
 
 	- Visit the URL provided by Streamlit in your browser.
 
