@@ -91,34 +91,53 @@ with st.sidebar:
     style_image_upload = None
 
     if content_image_option == "Upload Image":
-        content_image_upload = st.file_uploader(label=":blue[**Upload Custom Content Image**]:", type=['png', 'jpg', 'jpeg'])
+        content_image_upload = st.file_uploader(label=":blue[**Upload Custom Content Image**]:", type=['jpg', 'jpeg'])
 
     if style_image_option == "Upload Image":
-        style_image_upload = st.file_uploader(label=":blue[**Upload Custom Style Image**]:", type=['png', 'jpg', 'jpeg'])
+        style_image_upload = st.file_uploader(label=":blue[**Upload Custom Style Image**]:", type=['jpg', 'jpeg'])
 
     create_style = st.button(":white[Submit]", type="primary", use_container_width=True)
 
 # Create columns to display the images
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 content_image = None
 style_image = None
+h = 0
+w = 0
 
 # Get the content image
 if content_image_option != "Upload Image":
     content_image_path = os.path.join("contents", content_image_option)
-    content_image = Image.open(content_image_path).resize((275, 275))
+    content_image = Image.open(content_image_path)
+    h = content_image.height
+    w = content_image.width
 
 # Get the style image
 if style_image_option != "Upload Image":
     style_image_path = os.path.join("styles", style_image_option)
-    style_image = Image.open(style_image_path).resize((512, 512))
+    style_image = Image.open(style_image_path)
 
+# Check if content_image_upload is not None and has valid dimensions
 if content_image_upload:
-    content_image = Image.open(content_image_upload).resize((275, 275))
+    content_image = Image.open(content_image_upload)
+    h = content_image.height
+    w = content_image.width
 
+# Check if style_image_upload is not None and has valid dimensions
 if style_image_upload:
-    style_image = Image.open(style_image_upload).resize((512, 512))
+    style_image = Image.open(style_image_upload)
+    if h > 0 and w > 0:
+        style_image = style_image.resize((w, h))
+
+# Check for valid dimensions before attempting resizing
+if h > 0 and w > 0:
+    if content_image is not None:
+        content_image = content_image.resize((w, h))
+
+    if style_image is not None:
+        style_image = style_image.resize((w, h))
+
 
 # Display the content and style images
 if content_image is not None:
@@ -129,29 +148,58 @@ if style_image is not None:
     with col2:
         st.image(style_image, caption='Style Image', use_column_width=True)
 
+
 # Perform neural style transfer and display the result
 if create_style and content_image is not None and style_image is not None:
-    with col3:
-        with st.spinner('⚙️:rainbow[Stylizing Image ...]'):
-            try:
-                output = stylize_image(content_image, style_image)
 
-                # Convert the NumPy array to a PIL image
-                output_pil = Image.fromarray((output * 255).astype('uint8')[0])
+    st.markdown("""
+        <div style="text-align:center;">
+            <h1 style="color:#000000;
+                font-style: sans-serif;
+                font-size: 1.5em;
+                margin-top:30px;
+                margin-bottom: 30px;">
+                🎈 Stylized Image 🎉🎉
+            </h1>
+        </div>
+    """, unsafe_allow_html=True)
 
-                # Display the stylized image
-                st.image(output_pil, caption='Stylized Image', use_column_width=True)
+    # Styling process
+    with st.spinner('⚙️:rainbow[Stylizing Image ...]'):
+        try:
+            output = stylize_image(content_image, style_image)
 
-                # Save the stylized image as bytes for download
-                output_bytes = io.BytesIO()
-                output_pil.save(output_bytes, format='jpeg')
+            # Convert the NumPy array to a PIL image
+            output_pil = Image.fromarray((output * 255).astype('uint8')[0])
 
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
+            # Determine image dimensions for display
+            # display_width = 800
+            # display_height = int(output_pil.height * (display_width / output_pil.width))
+
+            # Resize the image for display
+            #img_display = output_pil.resize((display_width, display_height), Image.ANTIALIAS)
+            # display_width = 3350
+            # display_height = 2550 7200
+
+            display_width = 9000
+            display_height = 7800
+            img_display = output_pil.resize((display_width, display_height), Image.LANCZOS)
+            # Display the stylized image
+            st.image(img_display, caption='Stylized Image', use_column_width=True)
+
+            # Save the stylized image as bytes for download
+            output_bytes = io.BytesIO()
+
+            # output_pil.save(output_bytes, format='jpeg')
+            img_display.save(output_bytes, format='jpeg', dpi=(600, 600))
+
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
 
     # Add a download button for the stylized image
-    st.download_button(':white[**Download Stylized Image**]', data=output_bytes, type='primary',
-                       file_name='stylized_image.jpeg',
-                       mime="image/jpeg",
-                       key="download-button",
-                       use_container_width=False)
+    if output_bytes:
+        st.download_button(':white[**Download Stylized Image**]', data=output_bytes, type='primary',
+                           file_name='stylized_image.jpeg',
+                           mime="image/jpeg",
+                           key="download-button",
+                           use_container_width=False)
